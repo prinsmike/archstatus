@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
-	//"log"
-	//"os"
 )
 
 func main() {
