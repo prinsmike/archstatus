@@ -60,7 +60,7 @@ func main() {
 
 		s := fmt.Sprintf("%s", &b)
 
-		if strings.Contains(s, "active (running)") {
+		if strings.Contains(s, "active (running)") || strings.Contains(s, "active (mounted)") {
 			color := ansi.ColorCode("green+h:black")
 			reset := ansi.ColorCode("reset")
 
