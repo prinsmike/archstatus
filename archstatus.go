@@ -5,8 +5,13 @@ import (
 "fmt"
 "os/exec"
 "github.com/mgutz/ansi"
+"github.com/stevedomin/termtable"
 "strings"
 )
+
+func fmtString(color, str, reset string) string {
+	return fmt.Sprintf("%s%s%s", color, str, reset)
+}
 
 func main() {
 
@@ -24,30 +29,33 @@ func main() {
 		"var.mount",
 	}
 
+	t := termtable.NewTable(nil, nil)
+	t.SetHeader([]string{"SERVICE", "STATUS"})
+
 	for _, service := range services {
 
-	// The systemctl command.
+		// The systemctl command.
 		syscommand := exec.Command("systemctl", "status", service)
 
-	// The grep command.
+		// The grep command.
 		grepcommand := exec.Command("grep", "Active:")
 
-	// Pipe the stdout of syscommand to the stdin of grepcommand.
+		// Pipe the stdout of syscommand to the stdin of grepcommand.
 		grepcommand.Stdin, _ = syscommand.StdoutPipe()
 
-	// Create a buffer of bytes.
+		// Create a buffer of bytes.
 		var b bytes.Buffer
 
-	// Assign the address of our buffer to grepcommand.Stdout.
+		// Assign the address of our buffer to grepcommand.Stdout.
 		grepcommand.Stdout = &b
 
-	// Start grepcommand.
+		// Start grepcommand.
 		_ = grepcommand.Start()
 
-	// Run syscommand
+		// Run syscommand
 		_ = syscommand.Run()
 
-	// Wait for grepcommand to exit.
+		// Wait for grepcommand to exit.
 		_ = grepcommand.Wait()
 
 		s := fmt.Sprintf("%s", &b)
@@ -55,11 +63,14 @@ func main() {
 		if strings.Contains(s, "active (running)") {
 			color := ansi.ColorCode("green+h:black")
 			reset := ansi.ColorCode("reset")
-			fmt.Printf("%s[%s] -> %s%s", color, service, s, reset)
+
+			t.AddRow([]string{fmtString(color, service, reset), fmtString(color, s, reset)})		
 		} else {
 			color := ansi.ColorCode("red+h:black")
 			reset := ansi.ColorCode("reset")
-			fmt.Printf("%s[%s] -> %s%s", color, service, s, reset)
+
+			t.AddRow([]string{fmtString(color, service, reset), fmtString(color, s, reset)})
 		}
 	}
+	fmt.Println(t.Render())
 }
