@@ -55,11 +55,11 @@ func main() {
 		if strings.Contains(s, "active (running)") {
 			color := ansi.ColorCode("green+h:black")
 			reset := ansi.ColorCode("reset")
-			fmt.Printf("%s%s%s", color, s, reset)
+			fmt.Printf("%s[%s] -> %s%s", color, service, s, reset)
 		} else {
 			color := ansi.ColorCode("red+h:black")
 			reset := ansi.ColorCode("reset")
-			fmt.Printf("%s%s%s", color, s, reset)
+			fmt.Printf("%s[%s] -> %s%s", color, service, s, reset)
 		}
 	}
 }
