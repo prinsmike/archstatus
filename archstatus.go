@@ -4,6 +4,8 @@ import (
 "bytes"
 "fmt"
 "os/exec"
+"github.com/mgutz/ansi"
+"strings"
 )
 
 func main() {
@@ -48,6 +50,16 @@ func main() {
 	// Wait for grepcommand to exit.
 		_ = grepcommand.Wait()
 
-		fmt.Printf("%s", &b)
+		s := fmt.Sprintf("%s", &b)
+
+		if strings.Contains(s, "active (running)") {
+			color := ansi.ColorCode("green+h:black")
+			reset := ansi.ColorCode("reset")
+			fmt.Printf("%s%s%s", color, s, reset)
+		} else {
+			color := ansi.ColorCode("red+h:black")
+			reset := ansi.ColorCode("reset")
+			fmt.Printf("%s%s%s", color, s, reset)
+		}
 	}
 }
